@@ -1,0 +1,29 @@
+[
+  {
+    "id": 0,
+    "name": "OgeeCoffee",
+    "imgUrl": "https://images.unsplash.com/photo-1521401292936-0a2129a30b1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80",
+    "websiteURL": "www.Cofeestoreone.com",
+    "Address": "123 Devon Street",
+    "city": "Kingston",
+    "neighbourhood": "Bhaktapur"
+  },
+  {
+    "id": 1,
+    "name": "Liguanea Coffee Stop ",
+    "imgUrl": "https://images.unsplash.com/photo-1504627298434-2119d6928e93?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80",
+    "websiteURL": "www.Cofeestoretwo.com",
+    "Address": "Pride main Street",
+    "city": "Kingston",
+    "neighbourhood": "Bhaktapur"
+  },
+  {
+    "id": 2,
+    "name": "Uptown Stop Coffee",
+    "imgUrl": "https://images.unsplash.com/photo-1495774856032-8b90bbb32b32?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+    "websiteURL": "www.Cofeestorethree.com",
+    "Address": "Discovery lane Street",
+    "city": "Kingston",
+    "neighbourhood": "Bhaktapur"
+  }
+]
