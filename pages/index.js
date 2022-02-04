@@ -49,7 +49,6 @@ export default function Home(props) {
     }
   }, [latLong])
 
-  console.log({ latLong, locationErrorMsg })
   const handleOnBannerClick = () => {
     handleTrackLocation()
   }
@@ -98,7 +97,7 @@ export default function Home(props) {
         )}
         {props.coffeeStores.length > 0 && (
           <div className={styles.sectionWrapper}>
-            <h2 className={styles.heading2}>Torronto Stores</h2>
+            <h2 className={styles.heading2}>Kathmandu Stores</h2>
             <div className={styles.cardLayout}>
               {props.coffeeStores.map((coffeeStore) => (
                 <Card

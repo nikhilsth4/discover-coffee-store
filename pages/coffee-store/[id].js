@@ -3,12 +3,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import React, { useContext, useEffect, useState } from "react"
+import useSWR from "swr"
 
 import styles from "../../styles/coffee-store.module.css"
 import cls from "classnames"
 import { fetchCoffeeStores } from "../../lib/coffee-stores"
 import { StoreContext } from "../../store/store-context"
-import { isEmpty } from "../../utils"
+import { fetcher, isEmpty } from "../../utils"
 
 export async function getStaticProps(staticProps) {
   const params = staticProps.params
@@ -42,12 +43,43 @@ const CoffeeStore = (initialProps) => {
   const router = useRouter()
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore || {})
 
-  console.log(coffeeStore)
   const { id } = router.query
 
   const { dispatch, state } = useContext(StoreContext)
   const { coffeeStores } = state
-  console.log(coffeeStores)
+
+  const [votingCount, setVotingCount] = useState(0)
+  const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher)
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setCoffeeStore(data[0])
+      setVotingCount(data[0].voting)
+    }
+  }, [data])
+
+  const handleCreateCoffeeStore = async (coffeeStore) => {
+    try {
+      const { name, imgUrl, neighbourhood, address, id } = coffeeStore
+
+      const response = await fetch("/api/createCoffeeStore", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          name,
+          voting: 0,
+          imgUrl,
+          neighbourhood: neighbourhood || "",
+          address: address || "",
+        }),
+      })
+
+      const dbCoffeeStore = response.json()
+    } catch (error) {
+      console.error("error creating coffee store", error)
+    }
+  }
 
   useEffect(() => {
     if (isEmpty(initialProps?.coffeeStore || {})) {
@@ -55,26 +87,47 @@ const CoffeeStore = (initialProps) => {
         const coffeeStoreFromContext = coffeeStores.find((coffeeStore) => {
           return coffeeStore.id.toString() === id //dynamic id
         })
-        console.log({ coffeeStoreFromContext })
         if (coffeeStoreFromContext) {
           setCoffeeStore(coffeeStoreFromContext)
-          // handleCreateCoffeeStore(coffeeStoreFromContext)
+          handleCreateCoffeeStore(coffeeStoreFromContext)
         }
       }
     } else {
       // SSG
-      // handleCreateCoffeeStore(coffeeStore)
+      handleCreateCoffeeStore(initialProps.coffeeStore)
     }
   }, [coffeeStores, id, initialProps.coffeeStore])
+
+  if (error) {
+    return <div>Something went wrong</div>
+  }
 
   if (router.isFallback) {
     return <div>Loading</div>
   }
-  const handleUpvoteButton = () => {
-    console.log("h")
-  }
 
   const { address, name, imgUrl, neighbourhood } = coffeeStore
+
+  const handleUpvoteButton = async () => {
+    try {
+      const response = await fetch("/api/favouriteCoffeeStoreById", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      })
+
+      await response.json()
+      let count = votingCount + 1
+      setVotingCount(count)
+    } catch (err) {
+      console.error("Error upvoting the coffee store", err)
+    }
+  }
+
   return (
     <div className={styles.layout}>
       <Head>
@@ -129,7 +182,7 @@ const CoffeeStore = (initialProps) => {
               height={24}
               alt="icon"
             />
-            <p className={styles.text}>1</p>
+            <p className={styles.text}>{votingCount}</p>
           </div>
           <button className={styles.upvoteButton} onClick={handleUpvoteButton}>
             Upvote
